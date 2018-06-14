@@ -1,0 +1,11 @@
+C:\Users\user\source\repos\Brokeh Minecraft Checker\Brokeh Minecraft Checker\bin\Release\Brokeh Minecraft Checker.exe.config
+C:\Users\user\source\repos\Brokeh Minecraft Checker\Brokeh Minecraft Checker\bin\Release\Brokeh Minecraft Checker.exe
+C:\Users\user\source\repos\Brokeh Minecraft Checker\Brokeh Minecraft Checker\bin\Release\Brokeh Minecraft Checker.pdb
+C:\Users\user\source\repos\Brokeh Minecraft Checker\Brokeh Minecraft Checker\obj\Release\Brokeh Minecraft Checker.csprojResolveAssemblyReference.cache
+C:\Users\user\source\repos\Brokeh Minecraft Checker\Brokeh Minecraft Checker\obj\Release\Brokeh_Minecraft_Checker.Form1.resources
+C:\Users\user\source\repos\Brokeh Minecraft Checker\Brokeh Minecraft Checker\obj\Release\Brokeh_Minecraft_Checker.Properties.Resources.resources
+C:\Users\user\source\repos\Brokeh Minecraft Checker\Brokeh Minecraft Checker\obj\Release\Brokeh_Minecraft_Checker.StartScreen.resources
+C:\Users\user\source\repos\Brokeh Minecraft Checker\Brokeh Minecraft Checker\obj\Release\Brokeh Minecraft Checker.csproj.GenerateResource.cache
+C:\Users\user\source\repos\Brokeh Minecraft Checker\Brokeh Minecraft Checker\obj\Release\Brokeh Minecraft Checker.csproj.CoreCompileInputs.cache
+C:\Users\user\source\repos\Brokeh Minecraft Checker\Brokeh Minecraft Checker\obj\Release\Brokeh Minecraft Checker.exe
+C:\Users\user\source\repos\Brokeh Minecraft Checker\Brokeh Minecraft Checker\obj\Release\Brokeh Minecraft Checker.pdb
