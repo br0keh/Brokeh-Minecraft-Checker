@@ -1,4 +1,7 @@
 # Brokeh Minecraft Checker
 
+- HWID Verification
+- Hypixel level
+- Optifine Cape Check
 
-need code editing to work
+*Warning:* You need to make modifications to work.
