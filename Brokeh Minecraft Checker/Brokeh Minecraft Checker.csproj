@@ -61,6 +61,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\Account.cs" />
+    <Compile Include="Common\AccountExtra.cs" />
+    <Compile Include="Common\OptifineCapeExtra.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>

