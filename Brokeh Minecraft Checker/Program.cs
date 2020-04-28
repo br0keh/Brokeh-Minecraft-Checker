@@ -7,164 +7,55 @@ using System.Windows.Forms;
 
 namespace Brokeh_Minecraft_Checker
 {
-    static class Program
+    internal static class Program
     {
         /// <summary>
-        /// Ponto de entrada principal para o aplicativo.
+        /// The main method
         /// </summary>
         [STAThread]
-        static void Main()
+        private static void Main()
         {
-            var processes = Process.GetProcesses().Where(p => !string.IsNullOrEmpty(p.MainWindowTitle)).ToList();
+            KillDnSpyProcessByName();
 
-            foreach (var process in processes)
+            for (int i = 0; i < 11; i++)
             {
-                var id = process.Id;
-                var Wintitle = process.MainWindowTitle.ToString();
-                if (Wintitle.Contains("dnSpy"))
-                {
-                    Process.GetCurrentProcess().Kill();
-                }
+                KillDnSpyProcessByProcessList();
             }
-            Process[] processos = Process.GetProcessesByName("dnSpy");
-            if (processos.Length != 0)
-            {
-                foreach (var item in processos)
-                {
-                    Process.GetCurrentProcess().Kill();
-                }
-            }
-             processos = Process.GetProcessesByName("dnSpy");
-            if (processos.Length != 0)
-            {
-                foreach (var item in processos)
-                {
-                    Process.GetCurrentProcess().Kill();
-                }
-            }
-             processos = Process.GetProcessesByName("dnSpy");
-            if (processos.Length != 0)
-            {
-                foreach (var item in processos)
-                {
-                    Process.GetCurrentProcess().Kill();
-                }
-                 processos = Process.GetProcessesByName("dnSpy");
-                if (processos.Length != 0)
-                {
-                    foreach (var item in processos)
-                    {
-                        Process.GetCurrentProcess().Kill();
-                    }
-                }
-                 processos = Process.GetProcessesByName("dnSpy");
-                if (processos.Length != 0)
-                {
-                    foreach (var item in processos)
-                    {
-                        Process.GetCurrentProcess().Kill();
-                    }
-                }
-                 processos = Process.GetProcessesByName("dnSpy");
-                if (processos.Length != 0)
-                {
-                    foreach (var item in processos)
-                    {
-                        Process.GetCurrentProcess().Kill();
-                    }
-                }
-                 processos = Process.GetProcessesByName("dnSpy");
-                if (processos.Length != 0)
-                {
-                    foreach (var item in processos)
-                    {
-                        Process.GetCurrentProcess().Kill();
-                    }
-                     processos = Process.GetProcessesByName("dnSpy");
-                    if (processos.Length != 0)
-                    {
-                        foreach (var item in processos)
-                        {
-                            Process.GetCurrentProcess().Kill();
-                        }
-                         processos = Process.GetProcessesByName("dnSpy");
-                        if (processos.Length != 0)
-                        {
-                            foreach (var item in processos)
-                            {
-                                Process.GetCurrentProcess().Kill();
-                            }
-                        }
-                         processos = Process.GetProcessesByName("dnSpy");
-                        if (processos.Length != 0)
-                        {
-                            foreach (var item in processos)
-                            {
-                                Process.GetCurrentProcess().Kill();
-                            }
-                        }
-                         processos = Process.GetProcessesByName("dnSpy");
-                        if (processos.Length != 0)
-                        {
-                            foreach (var item in processos)
-                            {
-                                Process.GetCurrentProcess().Kill();
-                            }
-                        }
-                        processos = Process.GetProcessesByName("dnSpy");
-                        if (processos.Length != 0)
-                        {
-                            foreach (var item in processos)
-                            {
-                                Process.GetCurrentProcess().Kill();
-                            }
-                        }
-                    }
-                }
-            }
+
             Application.EnableVisualStyles();
-             processes = Process.GetProcesses().Where(p => !string.IsNullOrEmpty(p.MainWindowTitle)).ToList();
+            KillDnSpyProcessByName();
 
-            foreach (var process in processes)
-            {
-                var id = process.Id;
-                var Wintitle = process.MainWindowTitle.ToString();
-                if (Wintitle.Contains("dnSpy"))
-                {
-                    Process.GetCurrentProcess().Kill();
-                }
-            }
             Application.SetCompatibleTextRenderingDefault(false);
-             processes = Process.GetProcesses().Where(p => !string.IsNullOrEmpty(p.MainWindowTitle)).ToList();
+            KillDnSpyProcessByName();
 
-            foreach (var process in processes)
-            {
-                var id = process.Id;
-                var Wintitle = process.MainWindowTitle.ToString();
-                if (Wintitle.Contains("dnSpy"))
-                {
-                    Process.GetCurrentProcess().Kill();
-                }
-            }
             Application.Run(new StartScreen());
-             processes = Process.GetProcesses().Where(p => !string.IsNullOrEmpty(p.MainWindowTitle)).ToList();
+            KillDnSpyProcessByName();
+            KillDnSpyProcessByName();
+        }
 
-            foreach (var process in processes)
+        public static void KillDnSpyProcessByProcessList()
+        {
+            Process[] processesByName = Process.GetProcessesByName("dnSpy");
+            if (processesByName.Length == 0)
+                return;
+
+            foreach (var item in processesByName)
             {
-                var id = process.Id;
-                var Wintitle = process.MainWindowTitle.ToString();
-                if (Wintitle.Contains("dnSpy"))
-                {
-                    Process.GetCurrentProcess().Kill();
-                }
+                Process.GetCurrentProcess().Kill();
             }
-             processes = Process.GetProcesses().Where(p => !string.IsNullOrEmpty(p.MainWindowTitle)).ToList();
+        }
+
+        public static void KillDnSpyProcessByName()
+        {
+            List<Process> processes = Process.GetProcesses()
+                .Where(p => !string.IsNullOrEmpty(p.MainWindowTitle))
+                .ToList();
 
             foreach (var process in processes)
             {
-                var id = process.Id;
-                var Wintitle = process.MainWindowTitle.ToString();
-                if (Wintitle.Contains("dnSpy"))
+                int id = process.Id;
+                string winTitle = process.MainWindowTitle;
+                if (winTitle.Contains("dnSpy"))
                 {
                     Process.GetCurrentProcess().Kill();
                 }

