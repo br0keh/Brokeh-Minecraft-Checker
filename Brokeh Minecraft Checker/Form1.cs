@@ -30,7 +30,6 @@ namespace Brokeh_Minecraft_Checker
 
         private const string Version = "2.4.0";
         private const string AuthServerEndpoint = "https://authserver.mojang.com/authenticate";
-        private const string Changelog = "Added dark theme and internal changes.";
 
         private readonly Random _random;
         private readonly List<Account> _resolvedAccounts;
@@ -287,7 +286,7 @@ namespace Brokeh_Minecraft_Checker
             // Check enabled extras
             EnabledExtras.ForEach(extra =>
             {
-                bool f = extra.CheckExtra(new HttpRequest(), account);
+                bool f = extra.CheckExtra(account);
                 if (f) account.Extras.Add(extra);
             });
 
@@ -501,7 +500,7 @@ namespace Brokeh_Minecraft_Checker
             {
                 using (var writer = File.CreateText(fileDialog.FileName))
                 {
-                    writer.WriteLine("email:password,proxy");
+                    writer.WriteLine("email:password,extras,proxy");
                     writer.Flush();
                     writer.Close();
                 }

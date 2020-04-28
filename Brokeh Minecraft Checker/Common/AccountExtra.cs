@@ -18,9 +18,8 @@ namespace Brokeh_Minecraft_Checker.Common
         /// <summary>
         /// Checks for the current extra
         /// </summary>
-        /// <param name="request">Request will be used to check the extra</param>
         /// <param name="account">The account to check</param>
         /// <returns></returns>
-        public abstract bool CheckExtra(HttpRequest request, Account account);
+        public abstract bool CheckExtra(Account account);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace Brokeh_Minecraft_Checker.Common
 {
@@ -47,7 +48,11 @@ namespace Brokeh_Minecraft_Checker.Common
 
         public string ToCsv()
         {
-            return $"{Username}:{Password},{Proxy}";
+           
+            
+            return $"{Username}:{Password}," +
+                   $"{string.Join("|", Extras.Select(extra => extra.Name))}," +
+                   $"{Proxy}";
         }
     }
 }
