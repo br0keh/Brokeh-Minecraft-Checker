@@ -56,19 +56,6 @@ namespace Brokeh_Minecraft_Checker
 
             textBox1.Text = GetHardwareId();
             _currentHardwareId = Properties.Settings.Default.hwid;
-
-            var webClient = new WebClient();
-            try
-            {
-                string response =
-                    webClient.DownloadString("http://brokeh-checker.tk/check.php?hwid=" + _currentHardwareId);
-
-                checkerStatus.Text = "Online";
-            }
-            catch
-            {
-                checkerStatus.Text = "Offline temporarily";
-            }
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -79,43 +66,9 @@ namespace Brokeh_Minecraft_Checker
 
         private void button2_Click(object sender, EventArgs e)
         {
-            if (checkerStatus.Text != "Online")
-            {
-                MessageBox.Show("Checker offline!");
-            }
-            else
-            {
-                string error2 = "Internal error!";
-                WebClient wC = new WebClient();
-                try
-                {
-                    string resposta =
-                        wC.DownloadString("http://brokeh-checker.tk/check.php?hwid=" + _currentHardwareId);
-
-                    if (resposta.Contains("OK|"))
-                    {
-                        Form1 formd = new Form1(_currentHardwareId);
-
-                        this.Hide();
-                        formd.Show();
-                    }
-                    else if (resposta.Contains("Not authorized!"))
-                    {
-                        MessageBox.Show(resposta);
-                        Application.Exit();
-                    }
-                    else
-                    {
-                        MessageBox.Show(error2);
-
-                        Application.Exit();
-                    }
-                }
-                catch (Exception)
-                {
-                    MessageBox.Show("Checker offline!");
-                }
-            }
+            var accountCheckerForm = new Form1();
+            accountCheckerForm.Show();
+            Hide();
         }
     }
 }

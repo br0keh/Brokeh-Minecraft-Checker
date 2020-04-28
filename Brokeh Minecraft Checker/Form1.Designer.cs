@@ -23,13 +23,14 @@
         #region Código gerado pelo Windows Form Designer
 
         /// <summary>
-        /// Método necessário para suporte ao Designer - não modifique 
-        /// o conteúdo deste método com o editor de código.
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
+            System.ComponentModel.ComponentResourceManager resources =
+                new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.socks5 = new System.Windows.Forms.RadioButton();
             this.https = new System.Windows.Forms.RadioButton();
@@ -58,12 +59,12 @@
             this.label9 = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
             this.timer2 = new System.Windows.Forms.Timer(this.components);
-            this.aprovadas = new System.Windows.Forms.TextBox();
+            this.messageBox = new System.Windows.Forms.TextBox();
             this.groupBox1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.timeoutValue)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.threadCount)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize) (this.timeoutValue)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize) (this.threadCount)).BeginInit();
             this.groupBox4.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize) (this.pictureBox1)).BeginInit();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -92,7 +93,8 @@
             // socks5
             // 
             this.socks5.AutoSize = true;
-            this.socks5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.socks5.BackColor = System.Drawing.Color.FromArgb(((int) (((byte) (64)))), ((int) (((byte) (64)))),
+                ((int) (((byte) (64)))));
             this.socks5.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.socks5.Font = new System.Drawing.Font("Verdana", 8.25F);
             this.socks5.Location = new System.Drawing.Point(295, 86);
@@ -105,7 +107,8 @@
             // https
             // 
             this.https.AutoSize = true;
-            this.https.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.https.BackColor = System.Drawing.Color.FromArgb(((int) (((byte) (64)))), ((int) (((byte) (64)))),
+                ((int) (((byte) (64)))));
             this.https.Checked = true;
             this.https.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.https.Font = new System.Drawing.Font("Verdana", 8.25F);
@@ -119,30 +122,19 @@
             // 
             // timeoutValue
             // 
-            this.timeoutValue.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(48)))), ((int)(((byte)(48)))), ((int)(((byte)(48)))));
+            this.timeoutValue.BackColor = System.Drawing.Color.FromArgb(((int) (((byte) (48)))),
+                ((int) (((byte) (48)))), ((int) (((byte) (48)))));
             this.timeoutValue.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.timeoutValue.Font = new System.Drawing.Font("Verdana", 12F);
             this.timeoutValue.ForeColor = System.Drawing.Color.White;
             this.timeoutValue.Location = new System.Drawing.Point(224, 71);
-            this.timeoutValue.Maximum = new decimal(new int[] {
-            50,
-            0,
-            0,
-            0});
-            this.timeoutValue.Minimum = new decimal(new int[] {
-            5,
-            0,
-            0,
-            0});
+            this.timeoutValue.Maximum = new decimal(new int[] {50, 0, 0, 0});
+            this.timeoutValue.Minimum = new decimal(new int[] {5, 0, 0, 0});
             this.timeoutValue.Name = "timeoutValue";
             this.timeoutValue.Size = new System.Drawing.Size(48, 23);
             this.timeoutValue.TabIndex = 4;
             this.timeoutValue.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.timeoutValue.Value = new decimal(new int[] {
-            20,
-            0,
-            0,
-            0});
+            this.timeoutValue.Value = new decimal(new int[] {20, 0, 0, 0});
             // 
             // label6
             // 
@@ -154,9 +146,10 @@
             this.label6.TabIndex = 3;
             this.label6.Text = "Timeout:";
             // 
-            // quantidadeThreads
+            // threadCount
             // 
-            this.threadCount.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(48)))), ((int)(((byte)(48)))), ((int)(((byte)(48)))));
+            this.threadCount.BackColor = System.Drawing.Color.FromArgb(((int) (((byte) (48)))), ((int) (((byte) (48)))),
+                ((int) (((byte) (48)))));
             this.threadCount.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.threadCount.Font = new System.Drawing.Font("Verdana", 12F);
             this.threadCount.ForeColor = System.Drawing.Color.White;
@@ -165,11 +158,7 @@
             this.threadCount.Size = new System.Drawing.Size(48, 23);
             this.threadCount.TabIndex = 2;
             this.threadCount.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.threadCount.Value = new decimal(new int[] {
-            30,
-            0,
-            0,
-            0});
+            this.threadCount.Value = new decimal(new int[] {1, 0, 0, 0});
             // 
             // label4
             // 
@@ -183,7 +172,8 @@
             // 
             // button4
             // 
-            this.button4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(231)))), ((int)(((byte)(76)))), ((int)(((byte)(60)))));
+            this.button4.BackColor = System.Drawing.Color.FromArgb(((int) (((byte) (231)))), ((int) (((byte) (76)))),
+                ((int) (((byte) (60)))));
             this.button4.FlatAppearance.BorderSize = 0;
             this.button4.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button4.Font = new System.Drawing.Font("Verdana", 10F);
@@ -198,7 +188,8 @@
             // 
             // button3
             // 
-            this.button3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(204)))), ((int)(((byte)(113)))));
+            this.button3.BackColor = System.Drawing.Color.FromArgb(((int) (((byte) (46)))), ((int) (((byte) (204)))),
+                ((int) (((byte) (113)))));
             this.button3.FlatAppearance.BorderSize = 0;
             this.button3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button3.Font = new System.Drawing.Font("Verdana", 10F);
@@ -213,7 +204,8 @@
             // 
             // button2
             // 
-            this.button2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(48)))), ((int)(((byte)(48)))), ((int)(((byte)(48)))));
+            this.button2.BackColor = System.Drawing.Color.FromArgb(((int) (((byte) (48)))), ((int) (((byte) (48)))),
+                ((int) (((byte) (48)))));
             this.button2.FlatAppearance.BorderSize = 0;
             this.button2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button2.Font = new System.Drawing.Font("Verdana", 10F);
@@ -228,7 +220,8 @@
             // 
             // button1
             // 
-            this.button1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(48)))), ((int)(((byte)(48)))), ((int)(((byte)(48)))));
+            this.button1.BackColor = System.Drawing.Color.FromArgb(((int) (((byte) (48)))), ((int) (((byte) (48)))),
+                ((int) (((byte) (48)))));
             this.button1.FlatAppearance.BorderSize = 0;
             this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button1.Font = new System.Drawing.Font("Verdana", 10F);
@@ -266,7 +259,7 @@
             // 
             // pictureBox1
             // 
-            this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
+            this.pictureBox1.Image = ((System.Drawing.Image) (resources.GetObject("pictureBox1.Image")));
             this.pictureBox1.Location = new System.Drawing.Point(156, 32);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(60, 60);
@@ -278,7 +271,8 @@
             // threadsCountLabel
             // 
             this.threadsCountLabel.AutoSize = true;
-            this.threadsCountLabel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(44)))), ((int)(((byte)(62)))), ((int)(((byte)(80)))));
+            this.threadsCountLabel.BackColor = System.Drawing.Color.FromArgb(((int) (((byte) (44)))),
+                ((int) (((byte) (62)))), ((int) (((byte) (80)))));
             this.threadsCountLabel.Font = new System.Drawing.Font("Verdana", 10F);
             this.threadsCountLabel.ForeColor = System.Drawing.Color.White;
             this.threadsCountLabel.Location = new System.Drawing.Point(98, 89);
@@ -300,7 +294,8 @@
             // countErrorLabel
             // 
             this.countErrorLabel.AutoSize = true;
-            this.countErrorLabel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(73)))), ((int)(((byte)(94)))));
+            this.countErrorLabel.BackColor = System.Drawing.Color.FromArgb(((int) (((byte) (52)))),
+                ((int) (((byte) (73)))), ((int) (((byte) (94)))));
             this.countErrorLabel.Font = new System.Drawing.Font("Verdana", 10F);
             this.countErrorLabel.ForeColor = System.Drawing.Color.White;
             this.countErrorLabel.Location = new System.Drawing.Point(98, 72);
@@ -312,7 +307,8 @@
             // countBadLabel
             // 
             this.countBadLabel.AutoSize = true;
-            this.countBadLabel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(231)))), ((int)(((byte)(76)))), ((int)(((byte)(60)))));
+            this.countBadLabel.BackColor = System.Drawing.Color.FromArgb(((int) (((byte) (231)))),
+                ((int) (((byte) (76)))), ((int) (((byte) (60)))));
             this.countBadLabel.Font = new System.Drawing.Font("Verdana", 10F);
             this.countBadLabel.ForeColor = System.Drawing.Color.White;
             this.countBadLabel.Location = new System.Drawing.Point(98, 55);
@@ -344,7 +340,8 @@
             // countGoodsLabel
             // 
             this.countGoodsLabel.AutoSize = true;
-            this.countGoodsLabel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(204)))), ((int)(((byte)(113)))));
+            this.countGoodsLabel.BackColor = System.Drawing.Color.FromArgb(((int) (((byte) (46)))),
+                ((int) (((byte) (204)))), ((int) (((byte) (113)))));
             this.countGoodsLabel.Font = new System.Drawing.Font("Verdana", 10F);
             this.countGoodsLabel.ForeColor = System.Drawing.Color.White;
             this.countGoodsLabel.Location = new System.Drawing.Point(98, 39);
@@ -366,7 +363,8 @@
             // countsTestedsLabel
             // 
             this.countsTestedsLabel.AutoSize = true;
-            this.countsTestedsLabel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(241)))), ((int)(((byte)(196)))), ((int)(((byte)(15)))));
+            this.countsTestedsLabel.BackColor = System.Drawing.Color.FromArgb(((int) (((byte) (241)))),
+                ((int) (((byte) (196)))), ((int) (((byte) (15)))));
             this.countsTestedsLabel.Font = new System.Drawing.Font("Verdana", 10F);
             this.countsTestedsLabel.ForeColor = System.Drawing.Color.White;
             this.countsTestedsLabel.Location = new System.Drawing.Point(98, 22);
@@ -381,7 +379,7 @@
             this.label1.Font = new System.Drawing.Font("Verdana", 10F);
             this.label1.Location = new System.Drawing.Point(23, 22);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(62, 17);
+            this.label1.Size = new System.Drawing.Size(60, 17);
             this.label1.TabIndex = 0;
             this.label1.Text = "Tested:";
             // 
@@ -394,7 +392,8 @@
             // 
             this.label7.AutoSize = true;
             this.label7.BackColor = System.Drawing.Color.Transparent;
-            this.label7.Font = new System.Drawing.Font("Segoe UI", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label7.Font = new System.Drawing.Font("Segoe UI", 15F, System.Drawing.FontStyle.Regular,
+                System.Drawing.GraphicsUnit.Point, ((byte) (0)));
             this.label7.ForeColor = System.Drawing.Color.White;
             this.label7.Location = new System.Drawing.Point(55, 13);
             this.label7.Name = "label7";
@@ -406,8 +405,10 @@
             // 
             this.label9.AutoSize = true;
             this.label9.BackColor = System.Drawing.Color.Transparent;
-            this.label9.Font = new System.Drawing.Font("Segoe UI", 30F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label9.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(231)))), ((int)(((byte)(76)))), ((int)(((byte)(60)))));
+            this.label9.Font = new System.Drawing.Font("Segoe UI", 30F, System.Drawing.FontStyle.Regular,
+                System.Drawing.GraphicsUnit.Point, ((byte) (0)));
+            this.label9.ForeColor = System.Drawing.Color.FromArgb(((int) (((byte) (231)))), ((int) (((byte) (76)))),
+                ((int) (((byte) (60)))));
             this.label9.Location = new System.Drawing.Point(12, 1);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(50, 54);
@@ -416,7 +417,8 @@
             // 
             // panel1
             // 
-            this.panel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(48)))), ((int)(((byte)(48)))), ((int)(((byte)(48)))));
+            this.panel1.BackColor = System.Drawing.Color.FromArgb(((int) (((byte) (48)))), ((int) (((byte) (48)))),
+                ((int) (((byte) (48)))));
             this.panel1.Controls.Add(this.label7);
             this.panel1.Controls.Add(this.label9);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
@@ -424,35 +426,35 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(680, 56);
             this.panel1.TabIndex = 4;
+            
             // 
-            // timer2
+            // messageBox
             // 
-            this.timer2.Tick += new System.EventHandler(this.timer2_Tick);
-            // 
-            // aprovadas
-            // 
-            this.aprovadas.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(48)))), ((int)(((byte)(48)))), ((int)(((byte)(48)))));
-            this.aprovadas.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.aprovadas.Font = new System.Drawing.Font("Verdana", 9F);
-            this.aprovadas.ForeColor = System.Drawing.Color.White;
-            this.aprovadas.Location = new System.Drawing.Point(12, 191);
-            this.aprovadas.Multiline = true;
-            this.aprovadas.Name = "aprovadas";
-            this.aprovadas.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.aprovadas.Size = new System.Drawing.Size(656, 257);
-            this.aprovadas.TabIndex = 5;
+            this.messageBox.BackColor = System.Drawing.Color.FromArgb(((int) (((byte) (48)))), ((int) (((byte) (48)))),
+                ((int) (((byte) (48)))));
+            this.messageBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.messageBox.Font = new System.Drawing.Font("Verdana", 9F);
+            this.messageBox.ForeColor = System.Drawing.Color.White;
+            this.messageBox.Location = new System.Drawing.Point(12, 191);
+            this.messageBox.Multiline = true;
+            this.messageBox.Name = "messageBox";
+            this.messageBox.ReadOnly = true;
+            this.messageBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.messageBox.Size = new System.Drawing.Size(656, 257);
+            this.messageBox.TabIndex = 5;
             // 
             // Form1
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.BackColor = System.Drawing.Color.FromArgb(((int) (((byte) (64)))), ((int) (((byte) (64)))),
+                ((int) (((byte) (64)))));
             this.ClientSize = new System.Drawing.Size(680, 460);
-            this.Controls.Add(this.aprovadas);
+            this.Controls.Add(this.messageBox);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.panel1);
             this.Font = new System.Drawing.Font("Verdana", 14F);
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Icon = ((System.Drawing.Icon) (resources.GetObject("$this.Icon")));
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Brokeh Minecraft Checker";
@@ -460,16 +462,15 @@
             this.Load += new System.EventHandler(this.Form1_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.timeoutValue)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.threadCount)).EndInit();
+            ((System.ComponentModel.ISupportInitialize) (this.timeoutValue)).EndInit();
+            ((System.ComponentModel.ISupportInitialize) (this.threadCount)).EndInit();
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize) (this.pictureBox1)).EndInit();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
-
         }
 
         #endregion
@@ -502,7 +503,7 @@
         private System.Windows.Forms.Timer timer2;
         private System.Windows.Forms.RadioButton socks5;
         private System.Windows.Forms.RadioButton https;
-        private System.Windows.Forms.TextBox aprovadas;
+        private System.Windows.Forms.TextBox messageBox;
     }
 }
 

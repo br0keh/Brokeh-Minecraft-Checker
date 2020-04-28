@@ -1,4 +1,4 @@
-﻿*bin/
-.idea/
+﻿.idea/
 packages/
-/BrokehMinecraftChecker/obj/
+/Brokeh Minecraft Checker/bin/
+/Brokeh Minecraft Checker/obj/

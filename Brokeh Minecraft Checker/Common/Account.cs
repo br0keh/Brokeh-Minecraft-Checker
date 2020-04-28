@@ -39,5 +39,10 @@ namespace Brokeh_Minecraft_Checker.Common
             Password = password;
             Extras = new List<AccountExtra>();
         }
+
+        public override string ToString()
+        {
+            return $"{nameof(Username)}: {Username}, {nameof(Password)}: {Password}, {nameof(Proxy)}: {Proxy}";
+        }
     }
 }
