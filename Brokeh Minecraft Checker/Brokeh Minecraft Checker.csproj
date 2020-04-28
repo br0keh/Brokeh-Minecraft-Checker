@@ -55,8 +55,9 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
-    <Reference Include="xNet">
-      <HintPath>..\..\..\..\Desktop\Arquivos\Programação\DLL's\xNet (Requisições POST e GET)\xNet.dll</HintPath>
+    <Reference Include="xNet, Version=3.3.3.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\xNet.3.3.4\lib\xNet.dll</HintPath>
+      <Private>True</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -104,6 +105,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="FodyWeavers.xml" />
     <Content Include="LOGO.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
