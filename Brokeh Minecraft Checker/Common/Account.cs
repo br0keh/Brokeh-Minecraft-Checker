@@ -44,5 +44,10 @@ namespace Brokeh_Minecraft_Checker.Common
         {
             return $"{nameof(Username)}: {Username}, {nameof(Password)}: {Password}, {nameof(Proxy)}: {Proxy}";
         }
+
+        public string ToCsv()
+        {
+            return $"{Username}:{Password},{Proxy}";
+        }
     }
 }

@@ -31,6 +31,7 @@
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources =
                 new System.ComponentModel.ComponentResourceManager(typeof(Form1));
+            System.Windows.Forms.Button saveButton;
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.socks5 = new System.Windows.Forms.RadioButton();
             this.https = new System.Windows.Forms.RadioButton();
@@ -58,8 +59,8 @@
             this.label7 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.timer2 = new System.Windows.Forms.Timer(this.components);
             this.messageBox = new System.Windows.Forms.TextBox();
+            saveButton = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize) (this.timeoutValue)).BeginInit();
             ((System.ComponentModel.ISupportInitialize) (this.threadCount)).BeginInit();
@@ -70,6 +71,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(saveButton);
             this.groupBox1.Controls.Add(this.socks5);
             this.groupBox1.Controls.Add(this.https);
             this.groupBox1.Controls.Add(this.timeoutValue);
@@ -85,7 +87,7 @@
             this.groupBox1.ForeColor = System.Drawing.Color.White;
             this.groupBox1.Location = new System.Drawing.Point(12, 70);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(424, 115);
+            this.groupBox1.Size = new System.Drawing.Size(473, 115);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "< Control >";
@@ -178,7 +180,7 @@
             this.button4.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button4.Font = new System.Drawing.Font("Verdana", 10F);
             this.button4.ForeColor = System.Drawing.Color.White;
-            this.button4.Location = new System.Drawing.Point(328, 24);
+            this.button4.Location = new System.Drawing.Point(391, 24);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(76, 34);
             this.button4.TabIndex = 0;
@@ -194,7 +196,7 @@
             this.button3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button3.Font = new System.Drawing.Font("Verdana", 10F);
             this.button3.ForeColor = System.Drawing.Color.White;
-            this.button3.Location = new System.Drawing.Point(246, 24);
+            this.button3.Location = new System.Drawing.Point(309, 24);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(76, 34);
             this.button3.TabIndex = 0;
@@ -210,7 +212,7 @@
             this.button2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button2.Font = new System.Drawing.Font("Verdana", 10F);
             this.button2.ForeColor = System.Drawing.Color.White;
-            this.button2.Location = new System.Drawing.Point(132, 24);
+            this.button2.Location = new System.Drawing.Point(128, 24);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(108, 34);
             this.button2.TabIndex = 0;
@@ -226,7 +228,7 @@
             this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button1.Font = new System.Drawing.Font("Verdana", 10F);
             this.button1.ForeColor = System.Drawing.Color.White;
-            this.button1.Location = new System.Drawing.Point(18, 24);
+            this.button1.Location = new System.Drawing.Point(14, 24);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(108, 34);
             this.button1.TabIndex = 0;
@@ -250,7 +252,7 @@
             this.groupBox4.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.groupBox4.Font = new System.Drawing.Font("Verdana", 12F, System.Drawing.FontStyle.Italic);
             this.groupBox4.ForeColor = System.Drawing.Color.White;
-            this.groupBox4.Location = new System.Drawing.Point(442, 70);
+            this.groupBox4.Location = new System.Drawing.Point(491, 70);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(226, 115);
             this.groupBox4.TabIndex = 1;
@@ -424,31 +426,47 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(680, 56);
+            this.panel1.Size = new System.Drawing.Size(729, 56);
             this.panel1.TabIndex = 4;
-            
             // 
             // messageBox
             // 
             this.messageBox.BackColor = System.Drawing.Color.FromArgb(((int) (((byte) (48)))), ((int) (((byte) (48)))),
                 ((int) (((byte) (48)))));
             this.messageBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.messageBox.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.messageBox.Font = new System.Drawing.Font("Verdana", 9F);
             this.messageBox.ForeColor = System.Drawing.Color.White;
-            this.messageBox.Location = new System.Drawing.Point(12, 191);
+            this.messageBox.Location = new System.Drawing.Point(0, 203);
             this.messageBox.Multiline = true;
             this.messageBox.Name = "messageBox";
             this.messageBox.ReadOnly = true;
             this.messageBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.messageBox.Size = new System.Drawing.Size(656, 257);
+            this.messageBox.Size = new System.Drawing.Size(729, 257);
             this.messageBox.TabIndex = 5;
+            // 
+            // saveButton
+            // 
+            saveButton.BackColor = System.Drawing.Color.FromArgb(((int) (((byte) (48)))), ((int) (((byte) (48)))),
+                ((int) (((byte) (48)))));
+            saveButton.FlatAppearance.BorderSize = 0;
+            saveButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            saveButton.Font = new System.Drawing.Font("Verdana", 10F);
+            saveButton.ForeColor = System.Drawing.Color.White;
+            saveButton.Location = new System.Drawing.Point(242, 24);
+            saveButton.Name = "saveButton";
+            saveButton.Size = new System.Drawing.Size(61, 34);
+            saveButton.TabIndex = 6;
+            saveButton.Text = "Save\r\n";
+            saveButton.UseVisualStyleBackColor = false;
+            saveButton.Click += new System.EventHandler(this.saveButton_Click);
             // 
             // Form1
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.BackColor = System.Drawing.Color.FromArgb(((int) (((byte) (64)))), ((int) (((byte) (64)))),
                 ((int) (((byte) (64)))));
-            this.ClientSize = new System.Drawing.Size(680, 460);
+            this.ClientSize = new System.Drawing.Size(729, 460);
             this.Controls.Add(this.messageBox);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.groupBox1);
@@ -500,7 +518,6 @@
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.PictureBox pictureBox1;
-        private System.Windows.Forms.Timer timer2;
         private System.Windows.Forms.RadioButton socks5;
         private System.Windows.Forms.RadioButton https;
         private System.Windows.Forms.TextBox messageBox;

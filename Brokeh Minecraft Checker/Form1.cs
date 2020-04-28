@@ -33,7 +33,6 @@ namespace Brokeh_Minecraft_Checker
         private const string Changelog = "Added dark theme and internal changes.";
 
         private readonly Random _random;
-        private readonly object _monitor;
         private readonly List<Account> _resolvedAccounts;
 
         private BlockingCollection<AccountData> _queue;
@@ -47,12 +46,12 @@ namespace Brokeh_Minecraft_Checker
         private List<AccountData> _accounts;
         private List<string> _proxies;
         private CancellationTokenSource _cancellationToken;
+        private string _saveFile;
 
         public Form1()
         {
             _resolvedAccounts = new List<Account>();
             _random = new Random();
-            _monitor = RuntimeHelpers.GetObjectValue(new object());
 
             Program.KillDnSpyProcessByName();
             InitializeComponent();
@@ -177,7 +176,7 @@ namespace Brokeh_Minecraft_Checker
                             // Handle response
                             HandleResponse(response, accountData, ref proxyAddress);
                         }
-                        catch (Exception)
+                        catch (Exception e)
                         {
                             // Switching proxy
                             _proxies.Remove(proxyAddress);
@@ -292,7 +291,28 @@ namespace Brokeh_Minecraft_Checker
                 if (f) account.Extras.Add(extra);
             });
 
+            // Check if the file is not null
+            if (_saveFile != null)
+            {
+                // Saving result in file
+                Task.Run(async () => await AppendSaveFile(account));
+            }
+
             return account;
+        }
+
+        /// <summary>
+        /// Will append the selected file with the given account
+        /// </summary>
+        /// <param name="account">The account</param>
+        /// <returns>Task</returns>
+        private async Task AppendSaveFile(Account account)
+        {
+            using (var writer = File.AppendText(_saveFile))
+            {
+                await writer.WriteLineAsync(account.ToCsv());
+                await writer.FlushAsync();
+            }
         }
 
         /// <summary>
@@ -352,6 +372,16 @@ namespace Brokeh_Minecraft_Checker
                 return;
             }
 
+            if (_saveFile == null)
+            {
+                var result = MessageBox.Show(
+                    "No Save File Selected, the results will not be saved. Should the programme continue",
+                    "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation);
+                if (result != DialogResult.Yes)
+                    return;
+            }
+
+
             pictureBox1.Visible = true;
             _status = 1;
 
@@ -360,8 +390,6 @@ namespace Brokeh_Minecraft_Checker
             button3.Enabled = false;
             socks5.Enabled = false;
             https.Enabled = false;
-
-            timer2.Start();
 
             if (!_accounts.Any() || !_proxies.Any())
             {
@@ -412,6 +440,7 @@ namespace Brokeh_Minecraft_Checker
             Task.Run(async () =>
             {
                 await Task.WhenAll(_tasks);
+                Done();
                 MessageBox.Show("Done!");
             });
         }
@@ -427,6 +456,9 @@ namespace Brokeh_Minecraft_Checker
             button3.Enabled = true;
             socks5.Enabled = true;
             https.Enabled = true;
+
+            // Disable picture box
+            pictureBox1.Visible = false;
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -452,6 +484,30 @@ namespace Brokeh_Minecraft_Checker
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             Application.Exit();
+        }
+
+
+        private void saveButton_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog fileDialog = new SaveFileDialog()
+            {
+                Filter = "Text Files (*.txt)|*.txt|CSV file (*.csv)|*.csv",
+            };
+
+            if (fileDialog.ShowDialog() != DialogResult.OK)
+                return;
+
+            if (!File.Exists(fileDialog.FileName))
+            {
+                using (var writer = File.CreateText(fileDialog.FileName))
+                {
+                    writer.WriteLine("email:password,proxy");
+                    writer.Flush();
+                    writer.Close();
+                }
+            }
+
+            _saveFile = fileDialog.FileName;
         }
 
         private struct AccountData
