@@ -13,132 +13,62 @@ using System.Diagnostics;
 
 namespace Brokeh_Minecraft_Checker
 {
+    /// <summary>
+    /// The Start Screen is shown when the application boots up
+    /// There everything can be configured
+    /// </summary>
     public partial class StartScreen : Form
     {
+        private string _currentHardwareId;
+
         public StartScreen()
         {
-            Process[] processos = Process.GetProcessesByName("dnSpy");
-            if (processos.Length != 0)
-            {
-                foreach (var item in processos)
-                {
-                    Process.GetCurrentProcess().Kill();
-                }
-            }
-            var processes = Process.GetProcesses().Where(p => !string.IsNullOrEmpty(p.MainWindowTitle)).ToList();
-            foreach (var process in processes)
-            {
-                var id = process.Id;
-                var Wintitle = process.MainWindowTitle.ToString();
-                if (Wintitle.Contains("dnSpy"))
-                {
-                    Process.GetCurrentProcess().Kill();
-                }
-            }
+            Program.KillDnSpyProcessByProcessList();
+            Program.KillDnSpyProcessByName();
             InitializeComponent();
-          
-           
         }
-        string currentHwid;
-        private void label2_Click(object sender, EventArgs e)
-        {
 
-        }
-        string hwid()
+        /// <summary>
+        /// Retrieves the Hardware Id
+        /// </summary>
+        /// <returns>The fetched hardware id</returns>
+        private static string GetHardwareId()
         {
-            string drive = @"c";
-            ManagementObject dsk = new ManagementObject(@"win32_logicaldisk.deviceid=""" + drive + @":""");
+            const string drive = @"c";
+
+            var dsk = new ManagementObject(@"win32_logicaldisk.deviceid=""" + drive + @":""");
             dsk.Get();
-            string volumeSerial = dsk["VolumeSerialNumber"].ToString();
 
-            return volumeSerial.ToString();
+            string volumeSerial = dsk["VolumeSerialNumber"].ToString();
+            return volumeSerial;
         }
+
         private void StartScreen_Load(object sender, EventArgs e)
         {
-            var processes = Process.GetProcesses().Where(p => !string.IsNullOrEmpty(p.MainWindowTitle)).ToList();
+            Program.KillDnSpyProcessByName();
 
-            foreach (var process in processes)
+            if (Properties.Settings.Default.hwid.Length <= 0)
             {
-                var id = process.Id;
-                var Wintitle = process.MainWindowTitle.ToString();
-                if (Wintitle.Contains("dnSpy"))
-                {
-                    Process.GetCurrentProcess().Kill();
-                }
-            }
-            if (Properties.Settings.Default.hwid.ToString().Length <= 0)
-            {
-                textBox1.Text = hwid();
-                Properties.Settings.Default.hwid = hwid();
+                textBox1.Text = GetHardwareId();
+                Properties.Settings.Default.hwid = GetHardwareId();
                 Properties.Settings.Default.Save();
-                
             }
-            textBox1.Text = hwid();
-            currentHwid = Properties.Settings.Default.hwid;
 
-             WebClient wC = new WebClient();
-            try
-            {
-                string resposta = wC.DownloadString("http://brokeh-checker.tk/check.php?hwid=" + currentHwid);
-
-                checkerStatus.Text = "Online";
-            }
-            catch
-            {
-                
-                checkerStatus.Text = "Offline temporarily";
-            }
+            textBox1.Text = GetHardwareId();
+            _currentHardwareId = Properties.Settings.Default.hwid;
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
             Clipboard.Clear();
-            Clipboard.SetText( currentHwid );
+            Clipboard.SetText(_currentHardwareId);
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            if(checkerStatus.Text != "Online")
-            {
-                MessageBox.Show("Checker offline!");
-            }
-            else
-            {
-                string error2 = "Internal error!";
-                WebClient wC = new WebClient();
-                try
-                {
-                    string resposta = wC.DownloadString("http://brokeh-checker.tk/check.php?hwid=" + currentHwid);
-
-                    if (resposta.Contains("OK|"))
-                    {
-                        Form1 formd = new Form1(currentHwid);
-
-                        this.Hide();
-                        formd.Show();
-
-                    }
-                    else if (resposta.Contains("Not authorized!"))
-                    {
-                        MessageBox.Show(resposta);
-                        Application.Exit();
-                    }
-                    else
-                    {
-                        MessageBox.Show(error2);
-
-                        Application.Exit();
-                    }
-                }
-                catch (Exception)
-                {
-
-                    MessageBox.Show("Checker offline!");
-                }
-               
-
-            }
-           
+            var accountCheckerForm = new Form1();
+            accountCheckerForm.Show();
+            Hide();
         }
     }
 }
