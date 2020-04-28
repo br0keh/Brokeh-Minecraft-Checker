@@ -35,7 +35,7 @@
             this.https = new System.Windows.Forms.RadioButton();
             this.timeoutValue = new System.Windows.Forms.NumericUpDown();
             this.label6 = new System.Windows.Forms.Label();
-            this.quantidadeThreads = new System.Windows.Forms.NumericUpDown();
+            this.threadCount = new System.Windows.Forms.NumericUpDown();
             this.label4 = new System.Windows.Forms.Label();
             this.button4 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
@@ -61,7 +61,7 @@
             this.aprovadas = new System.Windows.Forms.TextBox();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.timeoutValue)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.quantidadeThreads)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.threadCount)).BeginInit();
             this.groupBox4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.panel1.SuspendLayout();
@@ -73,7 +73,7 @@
             this.groupBox1.Controls.Add(this.https);
             this.groupBox1.Controls.Add(this.timeoutValue);
             this.groupBox1.Controls.Add(this.label6);
-            this.groupBox1.Controls.Add(this.quantidadeThreads);
+            this.groupBox1.Controls.Add(this.threadCount);
             this.groupBox1.Controls.Add(this.label4);
             this.groupBox1.Controls.Add(this.button4);
             this.groupBox1.Controls.Add(this.button3);
@@ -88,7 +88,6 @@
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "< Control >";
-            this.groupBox1.Enter += new System.EventHandler(this.groupBox1_Enter);
             // 
             // socks5
             // 
@@ -102,7 +101,6 @@
             this.socks5.TabIndex = 5;
             this.socks5.Text = "SOCKS5 proxys";
             this.socks5.UseVisualStyleBackColor = false;
-            this.socks5.CheckedChanged += new System.EventHandler(this.socks5_CheckedChanged);
             // 
             // https
             // 
@@ -118,7 +116,6 @@
             this.https.TabStop = true;
             this.https.Text = "HTTP/S proxys";
             this.https.UseVisualStyleBackColor = false;
-            this.https.CheckedChanged += new System.EventHandler(this.https_CheckedChanged);
             // 
             // timeoutValue
             // 
@@ -146,7 +143,6 @@
             0,
             0,
             0});
-            this.timeoutValue.ValueChanged += new System.EventHandler(this.timeoutValue_ValueChanged);
             // 
             // label6
             // 
@@ -157,25 +153,23 @@
             this.label6.Size = new System.Drawing.Size(71, 17);
             this.label6.TabIndex = 3;
             this.label6.Text = "Timeout:";
-            this.label6.Click += new System.EventHandler(this.label6_Click);
             // 
             // quantidadeThreads
             // 
-            this.quantidadeThreads.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(48)))), ((int)(((byte)(48)))), ((int)(((byte)(48)))));
-            this.quantidadeThreads.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.quantidadeThreads.Font = new System.Drawing.Font("Verdana", 12F);
-            this.quantidadeThreads.ForeColor = System.Drawing.Color.White;
-            this.quantidadeThreads.Location = new System.Drawing.Point(92, 71);
-            this.quantidadeThreads.Name = "quantidadeThreads";
-            this.quantidadeThreads.Size = new System.Drawing.Size(48, 23);
-            this.quantidadeThreads.TabIndex = 2;
-            this.quantidadeThreads.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.quantidadeThreads.Value = new decimal(new int[] {
+            this.threadCount.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(48)))), ((int)(((byte)(48)))), ((int)(((byte)(48)))));
+            this.threadCount.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.threadCount.Font = new System.Drawing.Font("Verdana", 12F);
+            this.threadCount.ForeColor = System.Drawing.Color.White;
+            this.threadCount.Location = new System.Drawing.Point(92, 71);
+            this.threadCount.Name = "threadCount";
+            this.threadCount.Size = new System.Drawing.Size(48, 23);
+            this.threadCount.TabIndex = 2;
+            this.threadCount.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.threadCount.Value = new decimal(new int[] {
             30,
             0,
             0,
             0});
-            this.quantidadeThreads.ValueChanged += new System.EventHandler(this.quantidadeThreads_ValueChanged);
             // 
             // label4
             // 
@@ -186,7 +180,6 @@
             this.label4.Size = new System.Drawing.Size(76, 17);
             this.label4.TabIndex = 1;
             this.label4.Text = "Threads: ";
-            this.label4.Click += new System.EventHandler(this.label4_Click);
             // 
             // button4
             // 
@@ -270,7 +263,6 @@
             this.groupBox4.TabIndex = 1;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "< Status >";
-            this.groupBox4.Enter += new System.EventHandler(this.groupBox4_Enter);
             // 
             // pictureBox1
             // 
@@ -282,7 +274,6 @@
             this.pictureBox1.TabIndex = 3;
             this.pictureBox1.TabStop = false;
             this.pictureBox1.Visible = false;
-            this.pictureBox1.Click += new System.EventHandler(this.pictureBox1_Click);
             // 
             // threadsCountLabel
             // 
@@ -295,7 +286,6 @@
             this.threadsCountLabel.Size = new System.Drawing.Size(17, 17);
             this.threadsCountLabel.TabIndex = 1;
             this.threadsCountLabel.Text = "0";
-            this.threadsCountLabel.Click += new System.EventHandler(this.threadsCountLabel_Click);
             // 
             // label8
             // 
@@ -306,7 +296,6 @@
             this.label8.Size = new System.Drawing.Size(71, 17);
             this.label8.TabIndex = 2;
             this.label8.Text = "Threads:";
-            this.label8.Click += new System.EventHandler(this.label8_Click);
             // 
             // countErrorLabel
             // 
@@ -319,7 +308,6 @@
             this.countErrorLabel.Size = new System.Drawing.Size(17, 17);
             this.countErrorLabel.TabIndex = 0;
             this.countErrorLabel.Text = "0";
-            this.countErrorLabel.Click += new System.EventHandler(this.countErrorLabel_Click);
             // 
             // countBadLabel
             // 
@@ -332,7 +320,6 @@
             this.countBadLabel.Size = new System.Drawing.Size(17, 17);
             this.countBadLabel.TabIndex = 0;
             this.countBadLabel.Text = "0";
-            this.countBadLabel.Click += new System.EventHandler(this.countBadLabel_Click);
             // 
             // label5
             // 
@@ -343,7 +330,6 @@
             this.label5.Size = new System.Drawing.Size(58, 17);
             this.label5.TabIndex = 0;
             this.label5.Text = "Errors:";
-            this.label5.Click += new System.EventHandler(this.label5_Click);
             // 
             // label3
             // 
@@ -354,7 +340,6 @@
             this.label3.Size = new System.Drawing.Size(41, 17);
             this.label3.TabIndex = 0;
             this.label3.Text = "Bad:";
-            this.label3.Click += new System.EventHandler(this.label3_Click);
             // 
             // countGoodsLabel
             // 
@@ -367,7 +352,6 @@
             this.countGoodsLabel.Size = new System.Drawing.Size(17, 17);
             this.countGoodsLabel.TabIndex = 0;
             this.countGoodsLabel.Text = "0";
-            this.countGoodsLabel.Click += new System.EventHandler(this.countGoodsLabel_Click);
             // 
             // label2
             // 
@@ -378,7 +362,6 @@
             this.label2.Size = new System.Drawing.Size(52, 17);
             this.label2.TabIndex = 0;
             this.label2.Text = "Good:";
-            this.label2.Click += new System.EventHandler(this.label2_Click);
             // 
             // countsTestedsLabel
             // 
@@ -391,7 +374,6 @@
             this.countsTestedsLabel.Size = new System.Drawing.Size(17, 17);
             this.countsTestedsLabel.TabIndex = 0;
             this.countsTestedsLabel.Text = "0";
-            this.countsTestedsLabel.Click += new System.EventHandler(this.countsTestedsLabel_Click);
             // 
             // label1
             // 
@@ -402,7 +384,6 @@
             this.label1.Size = new System.Drawing.Size(62, 17);
             this.label1.TabIndex = 0;
             this.label1.Text = "Tested:";
-            this.label1.Click += new System.EventHandler(this.label1_Click);
             // 
             // timer1
             // 
@@ -420,7 +401,6 @@
             this.label7.Size = new System.Drawing.Size(444, 28);
             this.label7.TabIndex = 2;
             this.label7.Text = "B R O K E H    M I N E C R A F T   C H E C K E R   2.0";
-            this.label7.Click += new System.EventHandler(this.label7_Click);
             // 
             // label9
             // 
@@ -433,7 +413,6 @@
             this.label9.Size = new System.Drawing.Size(50, 54);
             this.label9.TabIndex = 3;
             this.label9.Text = "♥";
-            this.label9.Click += new System.EventHandler(this.label9_Click);
             // 
             // panel1
             // 
@@ -445,7 +424,6 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(680, 56);
             this.panel1.TabIndex = 4;
-            this.panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.panel1_Paint);
             // 
             // timer2
             // 
@@ -483,7 +461,7 @@
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.timeoutValue)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.quantidadeThreads)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.threadCount)).EndInit();
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
@@ -497,7 +475,7 @@
         #endregion
 
         private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.NumericUpDown quantidadeThreads;
+        private System.Windows.Forms.NumericUpDown threadCount;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Button button4;
         private System.Windows.Forms.Button button3;
